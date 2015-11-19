@@ -198,16 +198,29 @@
 # alias cd=cd_func
 
 
+# Load prompt for git get the file at https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
+if [ -f "${HOME}/.git-prompt.sh" ]; then
+  source "${HOME}/.git-prompt.sh"
+fi
+
+# Git prompt features (read ~/.git-prompt.sh for reference)
+export GIT_PS1_SHOWDIRTYSTATE="true"
+export GIT_PS1_SHOWSTASHSTATE="true"
+export GIT_PS1_SHOWUNTRACKEDFILES="true"
+export GIT_PS1_SHOWUPSTREAM="auto"
+export GIT_PS1_SHOWCOLORHINTS="true"
+
+
 HISTSIZE=99999
 HISTFILESIZE=99999
 # Do not put duplicate lines in the history
 export HISTCONTROL=ignoredups
 
 # Custom prompt
-PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\n\$ '
+PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]$(__git_ps1)\n\$ '
 # Use red prompt for root
 if [[ $EUID -eq 0 ]]; then
-  PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\][\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;31m\]]\[\033[00m\]\n\$ '
+		PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\][\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;31m\]]\[\033[00m\]$(__git_ps1)\n\$ '
 fi
 
 # Aliases
