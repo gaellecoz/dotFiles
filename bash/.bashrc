@@ -198,7 +198,8 @@
 # alias cd=cd_func
 
 
-# Load prompt for git get the file at https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
+# Load prompt for git
+# Get the file at https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
 if [ -f "${HOME}/.git-prompt.sh" ]; then
   source "${HOME}/.git-prompt.sh"
 fi
@@ -239,3 +240,8 @@ export EDITOR=vim
 umask 077
 
 DISPLAY=:0
+
+# Used to fix Perl error with locals
+export LC_CTYPE=fr_CH.UTF-8
+export LC_ALL=fr_CH.UTF-8
+export LANG=fr_CH.UTF-8
