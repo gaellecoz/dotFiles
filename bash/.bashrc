@@ -197,6 +197,23 @@
 # 
 # alias cd=cd_func
 
+#######################################################
+# Customized .bashrc
+
+
+# For MAC you should add this command in ~/.profile
+# source ~/.bashrc
+
+# Determine on which OS we are running
+if [ "$(uname)" == "Darwin" ]; then
+  CURRENT_OS=OSX
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+  CURRENT_OS=Linux
+elif [ "$(expr substr $(uname -s) 1 9)" == "CYGWIN_NT" ]; then
+  CURRENT_OS=Cygwin
+fi
+
+export test_os=${CURRENT_OS}
 
 # Load prompt for git
 # Get the file at https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
@@ -227,7 +244,11 @@ fi
 # Aliases
 alias ps='ps -ef'
 alias netstat='netstat -taupen'
-alias ll='ls -alpF --color=always'
+if [ "${CURRENT_OS}" == "OSX" ];then
+  alias ll='ls -alpFG' # For Mac OSX
+else 
+  alias ll='ls -alpF --color=always'
+fi
 alias grep='grep -n --color'
 alias vi='vim'
 alias du1='du -h --max-depth=1'
