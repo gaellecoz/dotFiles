@@ -215,6 +215,10 @@ fi
 
 export test_os=${CURRENT_OS}
 
+# Add bin to the path
+export PATH=${HOME}/bin:${PATH}
+
+
 # Load prompt for git
 # Get the file at https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
 if [ -f "${HOME}/.git-prompt.sh" ]; then
