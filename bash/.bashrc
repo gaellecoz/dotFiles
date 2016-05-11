@@ -247,10 +247,11 @@ fi
 
 # Aliases
 alias ps='ps -ef'
-alias netstat='netstat -taupen'
 if [ "${CURRENT_OS}" == "OSX" ];then
+  alias netstatp='netstat -taun -p tcp'
   alias ll='ls -alpFG' # For Mac OSX
 else 
+  alias netstatp='netstat -taupen'
   alias ll='ls -alpF --color=always'
 fi
 alias grep='grep -n --color'
