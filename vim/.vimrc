@@ -67,6 +67,8 @@ set smarttab
 " Enable mouse support
 set mouse=a
 
+" Set for proper integration with terminal and tmux
+set clipboard=unnamed
 
 
 
