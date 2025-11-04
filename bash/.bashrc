@@ -1,12 +1,3 @@
-# To the extent possible under law, the author(s) have dedicated all 
-# copyright and related and neighboring rights to this software to the 
-# public domain worldwide. This software is distributed without any warranty. 
-# You should have received a copy of the CC0 Public Domain Dedication along 
-# with this software. 
-# If not, see <http://creativecommons.org/publicdomain/zero/1.0/>. 
-
-# base-files version 4.2-3
-
 # ~/.bashrc: executed by bash(1) for interactive shells.
 
 # The latest version as installed by the Cygwin Setup program can
@@ -26,27 +17,50 @@
 # If not running interactively, don't do anything
 [[ "$-" != *i* ]] && return
 
+# For MAC you should add this command in ~/.profile
+# source ~/.bashrc
+
+# Determine on which OS we are running
+if [ "$(uname)" == "Darwin" ]; then
+  CURRENT_OS=OSX
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+  CURRENT_OS=Linux
+elif [ "$(expr substr $(uname -s) 1 9)" == "CYGWIN_NT" ]; then
+  CURRENT_OS=Cygwin
+fi
+
+export test_os=${CURRENT_OS}
+
 # Shell Options
-#
 # See man bash for more options...
-#
+
 # Don't wait for job termination notification
 # set -o notify
-#
+
 # Don't use ^D to exit
 # set -o ignoreeof
-#
+
 # Use case-insensitive filename globbing
 # shopt -s nocaseglob
-#
+
 # Make bash append rather than overwrite the history on disk
-# shopt -s histappend
-#
+shopt -s histappend
+
 # When changing directory small typos can be ignored by bash
 # for example, cd /vr/lgo/apaache would find /var/log/apache
-# shopt -s cdspell
+shopt -s cdspell
 
 # Completion options
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
 #
 # These completion tuning parameters change the default behavior of bash_completion:
 #
@@ -65,17 +79,21 @@
 
 # History Options
 #
-# Don't put duplicate lines in the history.
-# export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
-#
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+HISTSIZE=99999
+HISTFILESIZE=99999
+
 # Ignore some controlling instructions
 # HISTIGNORE is a colon-delimited list of patterns which should be excluded.
 # The '&' is a special pattern which suppresses duplicate entries.
-# export HISTIGNORE=$'[ \t]*:&:[fb]g:exit'
-# export HISTIGNORE=$'[ \t]*:&:[fb]g:exit:ls' # Ignore the ls command as well
-#
+export HISTIGNORE=$'[ \t]*:&:[fb]g:exit'
+export HISTIGNORE=$'[ \t]*:&:[fb]g:exit:ls' # Ignore the ls command as well
+
 # Whenever displaying the prompt, write the previous line to disk
 # export PROMPT_COMMAND="history -a"
+
 
 # Aliases
 #
@@ -91,28 +109,50 @@
 # \rm will call the real rm not the alias.
 #
 # Interactive operation...
-# alias rm='rm -i'
-# alias cp='cp -i'
-# alias mv='mv -i'
-#
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
 # Default to human readable figures
-# alias df='df -h'
-# alias du='du -h'
+alias df='df -h'
+alias du='du -h'
 #
 # Misc :)
-# alias less='less -r'                          # raw control characters
-# alias whence='type -a'                        # where, of a sort
-# alias grep='grep --color'                     # show differences in colour
-# alias egrep='egrep --color=auto'              # show differences in colour
-# alias fgrep='fgrep --color=auto'              # show differences in colour
-#
+# alias less='less -r'                        # raw control characters
+# alias whence='type -a'                      # where, of a sort
+alias grep='grep -n --color'                  # show differences in colour
+alias egrep='egrep --color=auto'              # show differences in colour
+alias fgrep='fgrep --color=auto'              # show differences in colour
+alias vi='vim'
+alias du1='du -h --max-depth=1'
+alias ps='ps -ef'
+if [ "${CURRENT_OS}" == "OSX" ];then
+  alias netstatp='netstat -taun -p tcp'
+  alias ll='ls -alpFG' # For Mac OSX          # long list
+else 
+  alias netstatp='netstat -taupen'
+  alias ll='ls -alpF --color=always'          # long list
+fi
+
 # Some shortcuts for different directory listings
-# alias ls='ls -hF --color=tty'                 # classify files in colour
-# alias dir='ls --color=auto --format=vertical'
-# alias vdir='ls --color=auto --format=long'
-# alias ll='ls -l'                              # long list
-# alias la='ls -A'                              # all but . and ..
-# alias l='ls -CF'                              #
+alias ls='ls -hF --color=tty'                 # classify files in colour
+alias dir='ls --color=auto --format=vertical'
+alias vdir='ls --color=auto --format=long'
+alias la='ls -A'                              # all but . and ..
+alias l='ls -CF'                              #
+
+
+# Variables
+export SVN_EDITOR=vim
+export VISUAL=vim
+export EDITOR=vim
+
+DISPLAY=:0
+
+# Used to fix Perl error with locals
+export LC_CTYPE=fr_CH.UTF-8
+export LC_ALL=fr_CH.UTF-8
+export LANG=fr_CH.UTF-8
 
 # Umask
 #
@@ -120,7 +160,32 @@
 # Set a more restrictive umask: i.e. no exec perms for others:
 # umask 027
 # Paranoid: neither group nor others have any perms:
-# umask 077
+umask 077
+
+# Path
+# Add bin to the path
+export PATH=${HOME}/bin:${PATH}
+
+# Git
+# Load prompt for git
+# Get the file at https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
+if [ -f "${HOME}/.git-prompt.sh" ]; then
+  source "${HOME}/.git-prompt.sh"
+fi
+
+# Git prompt features (read ~/.git-prompt.sh for reference)
+export GIT_PS1_SHOWDIRTYSTATE="true"
+export GIT_PS1_SHOWSTASHSTATE="true"
+export GIT_PS1_SHOWUNTRACKEDFILES="true"
+export GIT_PS1_SHOWUPSTREAM="auto"
+export GIT_PS1_SHOWCOLORHINTS="true"
+
+# Custom prompt
+PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]$(__git_ps1)\n\$ '
+# Use red prompt for root
+if [[ $EUID -eq 0 ]]; then
+		PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\][\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;31m\]]\[\033[00m\]$(__git_ps1)\n\$ '
+fi
 
 # Functions
 #
@@ -197,77 +262,4 @@
 # 
 # alias cd=cd_func
 
-#######################################################
-# Customized .bashrc
 
-
-# For MAC you should add this command in ~/.profile
-# source ~/.bashrc
-
-# Determine on which OS we are running
-if [ "$(uname)" == "Darwin" ]; then
-  CURRENT_OS=OSX
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-  CURRENT_OS=Linux
-elif [ "$(expr substr $(uname -s) 1 9)" == "CYGWIN_NT" ]; then
-  CURRENT_OS=Cygwin
-fi
-
-export test_os=${CURRENT_OS}
-
-# Add bin to the path
-export PATH=${HOME}/bin:${PATH}
-
-
-# Load prompt for git
-# Get the file at https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
-if [ -f "${HOME}/.git-prompt.sh" ]; then
-  source "${HOME}/.git-prompt.sh"
-fi
-
-# Git prompt features (read ~/.git-prompt.sh for reference)
-export GIT_PS1_SHOWDIRTYSTATE="true"
-export GIT_PS1_SHOWSTASHSTATE="true"
-export GIT_PS1_SHOWUNTRACKEDFILES="true"
-export GIT_PS1_SHOWUPSTREAM="auto"
-export GIT_PS1_SHOWCOLORHINTS="true"
-
-
-HISTSIZE=99999
-HISTFILESIZE=99999
-# Do not put duplicate lines in the history
-export HISTCONTROL=ignoredups
-
-# Custom prompt
-PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]$(__git_ps1)\n\$ '
-# Use red prompt for root
-if [[ $EUID -eq 0 ]]; then
-		PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\][\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;31m\]]\[\033[00m\]$(__git_ps1)\n\$ '
-fi
-
-# Aliases
-alias ps='ps -ef'
-if [ "${CURRENT_OS}" == "OSX" ];then
-  alias netstatp='netstat -taun -p tcp'
-  alias ll='ls -alpFG' # For Mac OSX
-else 
-  alias netstatp='netstat -taupen'
-  alias ll='ls -alpF --color=always'
-fi
-alias grep='grep -n --color'
-alias vi='vim'
-alias du1='du -h --max-depth=1'
-
-# Other variables
-export SVN_EDITOR=vim
-export VISUAL=vim
-export EDITOR=vim
-
-umask 077
-
-DISPLAY=:0
-
-# Used to fix Perl error with locals
-export LC_CTYPE=fr_CH.UTF-8
-export LC_ALL=fr_CH.UTF-8
-export LANG=fr_CH.UTF-8
