@@ -41,7 +41,7 @@ export test_os=${CURRENT_OS}
 # set -o ignoreeof
 
 # Use case-insensitive filename globbing
-# shopt -s nocaseglob
+shopt -s nocaseglob
 
 # Make bash append rather than overwrite the history on disk
 shopt -s histappend
